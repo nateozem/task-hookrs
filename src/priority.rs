@@ -8,7 +8,7 @@ use serde::Error;
 use serde::de::Visitor;
 
 /// Enum for the priorities taskwarrior supports.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub enum TaskPriority {
     /// Low prio for a Task
     Low,
