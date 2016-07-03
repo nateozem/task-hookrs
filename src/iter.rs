@@ -72,3 +72,13 @@ impl<I: Iterator<Item = Task>> TaskIterator<I> {
     }
 
 }
+
+impl<I: Iterator<Item = Task>> Iterator for TaskIterator<I> {
+    type Item = Task;
+
+    fn next(&mut self) -> Option<Task> {
+        self.i.next()
+    }
+
+}
+
