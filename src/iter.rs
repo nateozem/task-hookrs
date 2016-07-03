@@ -31,37 +31,32 @@ impl<I: Iterator<Item = Task>> TaskIterator<I> {
 
     /// Sort the tasks by prio
     pub fn sort_by_prio(self) -> Vec<Task> {
-        self.sort_by_fn(|a, b| {
-            if let Some(a) = a.priority() {
-                if let Some(b) = b.priority() {
-                    a.clone().cmp(b)
-                } else {
-                    Ordering::Less
-                }
-            } else {
-                Ordering::Greater
-            }
-        })
+        use self::sorting;
+        self.sort_by_fn(sorting::sort_by_prio)
     }
 
     /// Sort the tasks by entry date
     pub fn sort_by_entry(self) -> Vec<Task> {
-        unimplemented!()
+        use self::sorting;
+        self.sort_by_fn(sorting::sort_by_entry)
     }
 
     /// Sort the tasks by due date
     pub fn sort_by_due(self) -> Vec<Task> {
-        unimplemented!()
+        use self::sorting;
+        self.sort_by_fn(sorting::sort_by_due)
     }
 
     /// Sort the tasks by scheduled date
     pub fn sort_by_scheduled(self) -> Vec<Task> {
-        unimplemented!()
+        use self::sorting;
+        self.sort_by_fn(sorting::sort_by_scheduled)
     }
 
     /// Sort the tasks by number of annotations
     pub fn sort_by_num_annotations(self) -> Vec<Task> {
-        unimplemented!()
+        use self::sorting;
+        self.sort_by_fn(sorting::sort_by_num_annotations)
     }
 
     /// Filter the tasks with a custom function
@@ -82,3 +77,44 @@ impl<I: Iterator<Item = Task>> Iterator for TaskIterator<I> {
 
 }
 
+/// A module which contains functions that can be used to sort tasks
+/// Use these functions if you want to sort by two predicates, for example sorting by prio and by
+/// due date.
+pub mod sorting {
+    use std::cmp::Ordering;
+    use task::Task;
+
+    /// sort the tasks by prio
+    pub fn sort_by_prio(a: &Task, b: &Task) -> Ordering {
+        if let Some(a) = a.priority() {
+            if let Some(b) = b.priority() {
+                a.clone().cmp(b)
+            } else {
+                Ordering::Less
+            }
+        } else {
+            Ordering::Greater
+        }
+    }
+
+    /// Sort the tasks by entry date
+    pub fn sort_by_entry(a: &Task, b: &Task) -> Ordering {
+        unimplemented!()
+    }
+
+    /// Sort the tasks by due date
+    pub fn sort_by_due(a: &Task, b: &Task) -> Ordering {
+        unimplemented!()
+    }
+
+    /// Sort the tasks by scheduled date
+    pub fn sort_by_scheduled(a: &Task, b: &Task) -> Ordering {
+        unimplemented!()
+    }
+
+    /// Sort the tasks by number of annotations
+    pub fn sort_by_num_annotations(a: &Task, b: &Task) -> Ordering {
+        unimplemented!()
+    }
+
+}
