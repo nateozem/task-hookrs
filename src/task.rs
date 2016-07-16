@@ -1,6 +1,7 @@
 //! Module containing `Task` type as well as trait implementations
 
 use std::result::Result as RResult;
+use std::collections::BTreeMap;
 
 use serde::Serialize;
 use serde::Serializer;
@@ -17,6 +18,7 @@ use project::Project;
 use tag::Tag;
 use date::Date;
 use annotation::Annotation;
+use uda::{UDAName, UDAValue};
 
 /// Task type
 ///
@@ -55,6 +57,8 @@ pub struct Task {
     tags        : Vec<Tag>,
     until       : Option<Date>,
     wait        : Option<Date>,
+
+    uda         : BTreeMap<UDAName, UDAValue>,
 }
 
 /*
@@ -86,6 +90,7 @@ impl Task {
         tags        : Option<Vec<Tag>>,
         until       : Option<Date>,
         wait        : Option<Date>,
+        uda         : BTreeMap<UDAName, UDAValue>,
     ) -> Task
     {
         Task {
@@ -110,6 +115,7 @@ impl Task {
             tags        : tags.unwrap_or(vec![]),
             until       : until,
             wait        : wait,
+            uda         : uda,
         }
     }
 
@@ -227,6 +233,11 @@ impl Task {
     /// Get the wait date of the task
     pub fn wait(&self) -> Option<&Date> {
         self.wait.as_ref()
+    }
+
+    /// Get the BTreeMap that contains the UDA
+    pub fn uda(&self) -> &BTreeMap<UDAName, UDAValue> {
+        &self.uda
     }
 
 }
@@ -414,6 +425,7 @@ impl Visitor for TaskDeserializeVisitor {
         let mut tags        = None;
         let mut until       = None;
         let mut wait        = None;
+        let mut uda         = BTreeMap::new();
 
         loop {
             let key : Option<String> = try!(visitor.visit_key());
@@ -486,10 +498,9 @@ impl Visitor for TaskDeserializeVisitor {
                 },
 
                 field => {
-                    use serde::de::impls::IgnoredAny;
-
-                    debug!("field '{}' ignored", field);
-                    let _: IgnoredAny = try!(visitor.visit_value());
+                    debug!("Inserting '{}' as UDA", field);
+                    let s : String = try!(visitor.visit_value());
+                    uda.insert(UDAName::from(field), UDAValue::from(s));
                 }
             }
         }
@@ -537,7 +548,8 @@ impl Visitor for TaskDeserializeVisitor {
             start,
             tags,
             until,
-            wait
+            wait,
+            uda
         );
 
         Ok(task)
