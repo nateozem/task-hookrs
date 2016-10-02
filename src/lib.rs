@@ -39,10 +39,43 @@
 )]
 
 extern crate chrono;
-#[macro_use] extern crate log;
 extern crate serde;
 extern crate serde_json;
 extern crate uuid;
+
+#[cfg(feature = "logging")]
+#[macro_use]
+extern crate log;
+
+#[cfg(not(feature = "logging"))]
+macro_rules! error {
+    (target: $target:expr, $($arg:tt)*) => ();
+    ($($arg:tt)*) => ()
+}
+
+#[cfg(not(feature = "logging"))]
+macro_rules! debug {
+    (target: $target:expr, $($arg:tt)*) => ();
+    ($($arg:tt)*) => ()
+}
+
+#[cfg(not(feature = "logging"))]
+macro_rules! info {
+    (target: $target:expr, $($arg:tt)*) => ();
+    ($($arg:tt)*) => ()
+}
+
+#[cfg(not(feature = "logging"))]
+macro_rules! warn {
+    (target: $target:expr, $($arg:tt)*) => ();
+    ($($arg:tt)*) => ()
+}
+
+#[cfg(not(feature = "logging"))]
+macro_rules! trace {
+    (target: $target:expr, $($arg:tt)*) => ();
+    ($($arg:tt)*) => ()
+}
 
 pub mod annotation;
 pub mod date;
